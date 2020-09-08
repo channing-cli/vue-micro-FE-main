@@ -10,10 +10,12 @@
               :selectedKeys="[activeRule]"
               class="BasicLayout_header-menu"
             >
-              <a-menu-item v-for="app in apps" :key="app.activeRule">
-                <router-link :to="app.activeRule">
-                  <span>{{ app.$meta.title }}</span>
-                </router-link>
+              <a-menu-item
+                v-for="app in apps"
+                :key="app.activeRule"
+                @click="handleRouterLink(app.activeRule)"
+              >
+                <span>{{ app.$meta.title }}</span>
               </a-menu-item>
             </a-menu>
           </div>
@@ -23,10 +25,12 @@
               {{ currentTitle }} <a-icon type="down" />
             </a>
             <a-menu slot="overlay" selectable :selectedKeys="[activeRule]">
-              <a-menu-item v-for="app in apps" :key="app.activeRule">
-                <router-link :to="app.activeRule">
-                  <span>{{ app.$meta.title }}</span>
-                </router-link>
+              <a-menu-item
+                v-for="app in apps"
+                :key="app.activeRule"
+                @click="handleRouterLink(app.activeRule)"
+              >
+                <span>{{ app.$meta.title }}</span>
               </a-menu-item>
             </a-menu>
           </a-dropdown>
@@ -40,12 +44,7 @@
       @scroll="handleScroll"
     >
       <transition name="subApp_fade">
-        <div
-          id="subApp"
-          @change="handleTest"
-          ref="subApp"
-          v-show="!switchingApp"
-        >
+        <div id="subApp" ref="subApp" v-show="!switchingApp">
           Micro App
           <router-view />
         </div>
@@ -54,7 +53,6 @@
 
     <a-layout-footer class="BasicLayout_footer">
       Created By Channing
-      <a-button @click="handleTest">test</a-button>
     </a-layout-footer>
   </a-layout>
 </template>
@@ -83,8 +81,15 @@ export default {
     }
   },
   methods: {
-    handleTest() {
-      console.log(this.$refs.subApp.innerHTML);
+    handleRouterLink(activeRule) {
+      this.activeRule = activeRule;
+      // alert("hi");
+      this.switchingApp = true;
+      // this.switchingApp = false;
+      setTimeout(async () => {
+        await this.$router.push(activeRule);
+        this.switchingApp = false;
+      }, 500);
     },
     handleScroll(e) {
       this.scrollTop = e.target.scrollTop;
@@ -97,18 +102,8 @@ export default {
     this.activeRule = "/" + this.$route.path.split("/")[1];
   },
   watch: {
-    activeRule(newVal) {
-      console.log("newVal!~~!!!!!!!!!!");
-      console.log(newVal);
-      this.switchingApp = true;
-      // this.switchingApp = false;
-      setTimeout(() => {
-        this.switchingApp = false;
-      }, 500);
-    },
     $route(newVal) {
       this.activeRule = "/" + newVal.path.split("/")[1];
-      // console.log(this.activeRule);
     },
     screenWidth(newVal) {
       this.isCollapsed = newVal < 800;
@@ -123,9 +118,6 @@ export default {
   },
   mounted() {
     this.isCollapsed = this.screenWidth < 800;
-    // window.onresize = debounce(callback, 500, true);
-    // window.onresize = debounce(callback, 500, false);
-    // window.onresize = throttle(callback, 500, true);
     window.onresize = throttle(
       () => {
         this.screenWidth = document.body.clientWidth;
@@ -136,36 +128,7 @@ export default {
   }
 };
 </script>
-<style>
-.menu_fade-enter,
-.menu_fade-leave-to {
-  opacity: 0;
-  //transform: translate3d(0px, -0px, 100px);
-  transform: perspective(500px) translateZ(100px);
-}
-
-.head_fade-enter,
-.head_fade-leave-to {
-  transform: rotateX(90deg) perspective(100px) translateZ(50px);
-}
-
-.head_fade-enter-active,
-.head_fade-leave-active,
-.menu_fade-enter-active,
-.menu_fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.54, 0.05, 0.29, 2);
-}
-
-.subApp_fade-enter,
-.subApp_fade-leave-to {
-  opacity: 0;
-  transform: perspective(500px) translateZ(-100px);
-}
-.subApp_fade-enter-active,
-.subApp_fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.54, 0.05, 0.29, 2);
-}
-</style>
+<style></style>
 <style lang="scss" scoped>
 .BasicLayout_container {
   //background: #42b983;
@@ -196,5 +159,35 @@ export default {
   .BasicLayout_footer {
     text-align: center;
   }
+}
+
+/*transition相关*/
+.menu_fade-enter,
+.menu_fade-leave-to {
+  opacity: 0;
+  //transform: translate3d(0px, -0px, 100px);
+  transform: perspective(500px) translateZ(100px);
+}
+
+.head_fade-enter,
+.head_fade-leave-to {
+  transform: rotateX(90deg) perspective(100px) translateZ(50px);
+}
+
+.head_fade-enter-active,
+.head_fade-leave-active,
+.menu_fade-enter-active,
+.menu_fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.54, 0.05, 0.29, 2);
+}
+
+.subApp_fade-enter,
+.subApp_fade-leave-to {
+  opacity: 0;
+  transform: perspective(500px) translateZ(-100px);
+}
+.subApp_fade-enter-active,
+.subApp_fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.54, 0.05, 0.29, 2);
 }
 </style>
