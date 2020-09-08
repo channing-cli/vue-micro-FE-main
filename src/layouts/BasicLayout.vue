@@ -9,7 +9,6 @@
               mode="horizontal"
               :selectedKeys="[activeRule]"
               class="BasicLayout_header-menu"
-              @select="handleSelect"
             >
               <a-menu-item v-for="app in apps" :key="app.activeRule">
                 <router-link :to="app.activeRule">
@@ -23,12 +22,7 @@
             <a class="ant-dropdown-link" @click="e => e.preventDefault()">
               {{ currentTitle }} <a-icon type="down" />
             </a>
-            <a-menu
-              slot="overlay"
-              selectable
-              @select="handleSelect"
-              :selectedKeys="[activeRule]"
-            >
+            <a-menu slot="overlay" selectable :selectedKeys="[activeRule]">
               <a-menu-item v-for="app in apps" :key="app.activeRule">
                 <router-link :to="app.activeRule">
                   <span>{{ app.$meta.title }}</span>
@@ -45,14 +39,22 @@
       ref="BasicLayout_content"
       @scroll="handleScroll"
     >
-      <div id="subApp">
-        Micro App
-        <router-view />
-      </div>
+      <transition name="subApp_fade">
+        <div
+          id="subApp"
+          @change="handleTest"
+          ref="subApp"
+          v-show="!switchingApp"
+        >
+          Micro App
+          <router-view />
+        </div>
+      </transition>
     </a-layout-content>
 
     <a-layout-footer class="BasicLayout_footer">
       Created By Channing
+      <a-button @click="handleTest">test</a-button>
     </a-layout-footer>
   </a-layout>
 </template>
@@ -60,17 +62,17 @@
 import apps from "@/shared/microApps";
 import { debounce, throttle } from "@/shared/util";
 
-const vm = {
+export default {
   data() {
     return {
-      that: this,
       apps,
       activeRule: void 0,
       ruleMap: new Map(),
       screenWidth: document.body.clientWidth,
       isCollapsed: false,
       scrollTop: 0,
-      showHeader: true
+      showHeader: true,
+      switchingApp: false
     };
   },
   computed: {
@@ -81,8 +83,8 @@ const vm = {
     }
   },
   methods: {
-    handleSelect(e) {
-      this.activeRule = e.key;
+    handleTest() {
+      console.log(this.$refs.subApp.innerHTML);
     },
     handleScroll(e) {
       this.scrollTop = e.target.scrollTop;
@@ -95,15 +97,24 @@ const vm = {
     this.activeRule = "/" + this.$route.path.split("/")[1];
   },
   watch: {
+    activeRule(newVal) {
+      console.log("newVal!~~!!!!!!!!!!");
+      console.log(newVal);
+      this.switchingApp = true;
+      // this.switchingApp = false;
+      setTimeout(() => {
+        this.switchingApp = false;
+      }, 500);
+    },
+    $route(newVal) {
+      this.activeRule = "/" + newVal.path.split("/")[1];
+      // console.log(this.activeRule);
+    },
     screenWidth(newVal) {
       this.isCollapsed = newVal < 800;
     },
     scrollTop: debounce(
       function(newVal, oldVal) {
-        console.log("newVal", newVal);
-        console.log("oldVal", oldVal);
-        console.log("newVal - oldVal", newVal - oldVal);
-
         this.showHeader = newVal - oldVal <= 0;
       },
       100,
@@ -124,7 +135,6 @@ const vm = {
     );
   }
 };
-export default vm;
 </script>
 <style>
 .menu_fade-enter,
@@ -143,6 +153,16 @@ export default vm;
 .head_fade-leave-active,
 .menu_fade-enter-active,
 .menu_fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.54, 0.05, 0.29, 2);
+}
+
+.subApp_fade-enter,
+.subApp_fade-leave-to {
+  opacity: 0;
+  transform: perspective(500px) translateZ(-100px);
+}
+.subApp_fade-enter-active,
+.subApp_fade-leave-active {
   transition: all 0.5s cubic-bezier(0.54, 0.05, 0.29, 2);
 }
 </style>
