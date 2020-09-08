@@ -82,10 +82,11 @@ export default {
   },
   methods: {
     handleRouterLink(activeRule) {
+      if (this.activeRule === activeRule) {
+        return;
+      }
       this.activeRule = activeRule;
-      // alert("hi");
       this.switchingApp = true;
-      // this.switchingApp = false;
       setTimeout(async () => {
         await this.$router.push(activeRule);
         this.switchingApp = false;
