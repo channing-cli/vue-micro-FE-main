@@ -59,6 +59,10 @@
 <script>
 import apps from "@/shared/microApps";
 import { debounce, throttle } from "@/shared/util";
+import {
+  onGlobalStateChange,
+  offGlobalStateChange
+} from "@/shared/subRegister";
 
 export default {
   data() {
@@ -94,6 +98,18 @@ export default {
     },
     handleScroll(e) {
       this.scrollTop = e.target.scrollTop;
+    },
+    // qiankun全局通信方法的使用demo
+    handleGlobalState() {
+      onGlobalStateChange((state, prev) => {
+        console.log("BasicLayout监听到state变化");
+        console.log("变化后:", state);
+        console.log("变化前:", prev);
+      });
+      // 6s后取消监听
+      setTimeout(() => {
+        offGlobalStateChange();
+      }, 6000);
     }
   },
   created() {
@@ -118,6 +134,9 @@ export default {
     )
   },
   mounted() {
+    this.handleGlobalState();
+
+    // 节流监听视窗变化
     this.isCollapsed = this.screenWidth < 800;
     window.onresize = throttle(
       () => {

@@ -2,10 +2,28 @@ import {
   registerMicroApps,
   start,
   runAfterFirstMounted,
-  setDefaultMountApp
+  setDefaultMountApp,
+  initGlobalState
 } from "qiankun";
 
 import apps from "@/shared/microApps";
+
+/*添加全局状态管理*/
+const state = {};
+/*获取三个通信方法并暴露给子组件*/
+export const {
+  onGlobalStateChange,
+  setGlobalState,
+  offGlobalStateChange
+} = initGlobalState(state);
+
+setInterval(() => {
+  setGlobalState({
+    userInfo: {
+      token: ~~(Math.random() * 10000000)
+    }
+  });
+}, 1500);
 
 /*
  *主应用的生命周期
