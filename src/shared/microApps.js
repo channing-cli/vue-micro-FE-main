@@ -39,16 +39,16 @@ const apps = [
     $meta: {
       title: "微应用3"
     }
-  },
-  {
-    name: "vue-micro-sub-4",
-    entry: "//localhost:8064",
-    container: "#subApp",
-    activeRule: "/vue-micro-sub-4",
-    $meta: {
-      title: "微应用4"
-    }
   }
+  // {
+  //   name: "vue-micro-sub-4",
+  //   entry: "//localhost:8064",
+  //   container: "#subApp",
+  //   activeRule: "/vue-micro-sub-4",
+  //   $meta: {
+  //     title: "微应用4"
+  //   }
+  // }
 ];
 
 module.exports = apps;

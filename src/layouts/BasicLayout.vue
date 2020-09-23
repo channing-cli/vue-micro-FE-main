@@ -43,10 +43,11 @@
       ref="BasicLayout_content"
       @scroll="handleScroll"
     >
+      <Loading v-show="isLoading"></Loading>
+
       <transition name="subApp_fade">
         <div id="subApp" ref="subApp" v-show="!switchingApp">
           Micro App
-          <router-view />
         </div>
       </transition>
     </a-layout-content>
@@ -57,14 +58,15 @@
   </a-layout>
 </template>
 <script>
+import Loading from "@/components/common/Loading";
 import apps from "@/shared/microApps";
 import { debounce, throttle } from "@/shared/util";
-import {
-  onGlobalStateChange,
-  offGlobalStateChange
-} from "@/shared/subRegister";
+import { onGlobalStateChange, offGlobalStateChange } from "@/main";
 
 export default {
+  components: {
+    Loading
+  },
   data() {
     return {
       apps,
@@ -78,6 +80,9 @@ export default {
     };
   },
   computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
     currentTitle() {
       return this.activeRule
         ? this.ruleMap.get(this.activeRule)
@@ -101,6 +106,8 @@ export default {
     },
     // qiankun全局通信方法的使用demo
     handleGlobalState() {
+      console.log("onGlobalStateChange!!!!!!!!!!!");
+      console.log(onGlobalStateChange);
       onGlobalStateChange((state, prev) => {
         console.log("BasicLayout监听到state变化");
         console.log("变化后:", state);
@@ -148,11 +155,22 @@ export default {
   }
 };
 </script>
-<style></style>
 <style lang="scss" scoped>
 .BasicLayout_container {
   //background: #42b983;
   height: 100vh;
+  position: relative;
+
+  .switchLoading {
+    height: 32px;
+    width: 150px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
 
   .BasicLayout_header {
     background: #fff;

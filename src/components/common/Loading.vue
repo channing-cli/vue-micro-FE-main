@@ -26,6 +26,14 @@ export default {
   display: flex;
   animation-delay: 1s;
   justify-content: center;
+  height: 32px;
+  width: 150px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
 
   .dot {
     position: relative;

@@ -7,8 +7,17 @@
 <script>
 import BasicLayout from "@/layouts/BasicLayout";
 export default {
+  name: "APP",
   components: {
     BasicLayout
+  },
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
+    logs() {
+      return this.$store.state.logs;
+    }
   },
   created() {
     console.log(process.env);
