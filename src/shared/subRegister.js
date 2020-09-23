@@ -17,13 +17,19 @@ export const {
   offGlobalStateChange
 } = initGlobalState(state);
 
-setInterval(() => {
-  setGlobalState({
-    userInfo: {
-      token: ~~(Math.random() * 10000000)
-    }
-  });
-}, 1500);
+// 改变十次state后清除interval
+(function() {
+  let count = 0;
+  const interval = setInterval(() => {
+    setGlobalState({
+      userInfo: {
+        token: ~~(Math.random() * 10000000)
+      }
+    });
+    count++;
+    count >= 10 && clearInterval(interval);
+  }, 1000);
+})();
 
 /*
  *主应用的生命周期
