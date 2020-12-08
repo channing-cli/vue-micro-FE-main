@@ -8,9 +8,12 @@ import {
 
 import apps from "@/shared/microApps";
 
+
+import handleInvoke from "@/shared/handleInvoke";
+
 export default function subRegister(vm) {
   /*添加全局状态管理*/
-  const state = {};
+  const state = { invoke: [] };
   /*获取三个通信方法*/
   const {
     onGlobalStateChange,
@@ -18,19 +21,7 @@ export default function subRegister(vm) {
     offGlobalStateChange
   } = initGlobalState(state);
 
-  // 改变五次state后清除interval
-  (function() {
-    let count = 0;
-    const interval = setInterval(() => {
-      setGlobalState({
-        userInfo: {
-          token: ~~(Math.random() * 10000000)
-        }
-      });
-      count++;
-      count >= 5 && clearInterval(interval);
-    }, 3000);
-  })();
+  handleInvoke(onGlobalStateChange, setGlobalState, offGlobalStateChange);
 
   /*
    *主应用的生命周期
@@ -44,8 +35,12 @@ export default function subRegister(vm) {
       }
     ],
     beforeMount: [
-      app => {
-        console.log("[LifeCycle] before mount %c%s", "color: green;", app.name);
+      async app => {
+        console.log(
+          "[LifeCycle] before mount %c%s !!!!!!!!!!!!!!!!!!!!!!!!",
+          "color: green;",
+          app.name
+        );
       }
     ],
     afterUnmount: [
